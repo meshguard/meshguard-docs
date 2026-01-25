@@ -15,7 +15,7 @@ AutoGPT agents operate with significant autonomy, making governance especially i
 
 - Python 3.10+
 - AutoGPT installed (from [agpt.co](https://agpt.co))
-- MeshGuard gateway running (see [Quickstart](../QUICKSTART.md))
+- MeshGuard gateway running (see [Quickstart](/guide/quickstart.md))
 - An agent token from MeshGuard
 
 ## Installation
@@ -769,5 +769,5 @@ def send_email(recipient: str, subject: str, body: str):
 
 - [LangChain Integration](./langchain.md) — For chain-based agents
 - [CrewAI Integration](./crewai.md) — For multi-agent systems
-- [Generic HTTP Integration](./generic.md) — For custom setups
-- [Policy Reference](../GETTING_STARTED.md#understanding-policies) — Write custom policies
+- [Generic HTTP Integration](/integrations/http.md) — For custom setups
+- [Policy Reference](/guide/getting-started.md#understanding-policies) — Write custom policies

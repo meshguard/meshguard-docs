@@ -14,7 +14,7 @@ This guide shows you how to integrate using any HTTP client.
 
 ## Prerequisites
 
-- MeshGuard gateway running (see [Quickstart](../QUICKSTART.md))
+- MeshGuard gateway running (see [Quickstart](/guide/quickstart.md))
 - An agent token
 - Any HTTP client (curl, Python requests, fetch, etc.)
 
@@ -820,4 +820,4 @@ curl http://localhost:3100/health
 - [LangChain Integration](./langchain.md) — Python agent framework
 - [CrewAI Integration](./crewai.md) — Multi-agent systems
 - [AutoGPT Integration](./autogpt.md) — Autonomous agents
-- [Policy Reference](../GETTING_STARTED.md#understanding-policies) — Write custom policies
+- [Policy Reference](/guide/getting-started.md#understanding-policies) — Write custom policies

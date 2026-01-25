@@ -14,7 +14,7 @@ This guide shows you how to:
 
 - Python 3.9+
 - LangChain installed (`pip install langchain langchain-openai`)
-- MeshGuard gateway running (see [Quickstart](../QUICKSTART.md))
+- MeshGuard gateway running (see [Quickstart](/guide/quickstart.md))
 - An agent token from MeshGuard
 
 ## Installation
@@ -529,7 +529,7 @@ meshguard.session.timeout = 30  # seconds
 
 ## Next Steps
 
-- [Policy Reference](../GETTING_STARTED.md#understanding-policies) — Learn policy syntax
-- [Audit Queries](../GETTING_STARTED.md#audit-commands) — Query the audit log
+- [Policy Reference](/guide/getting-started.md#understanding-policies) — Learn policy syntax
+- [Audit Queries](/guide/getting-started.md#audit-commands) — Query the audit log
 - [CrewAI Integration](./crewai.md) — For multi-agent systems
-- [Generic HTTP Integration](./generic.md) — For custom setups
+- [Generic HTTP Integration](/integrations/http.md) — For custom setups

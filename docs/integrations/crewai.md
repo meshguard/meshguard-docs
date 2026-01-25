@@ -15,7 +15,7 @@ CrewAI enables teams of AI agents to collaborate on complex tasks. MeshGuard add
 
 - Python 3.9+
 - CrewAI installed (`pip install crewai crewai-tools`)
-- MeshGuard gateway running (see [Quickstart](../QUICKSTART.md))
+- MeshGuard gateway running (see [Quickstart](/guide/quickstart.md))
 - Agent tokens for each crew member
 
 ## Installation
@@ -682,4 +682,4 @@ trace_id = MeshGuard.init_trace()
 
 - [LangChain Integration](./langchain.md) — For single-agent workflows
 - [AutoGPT Integration](./autogpt.md) — For autonomous agents
-- [Policy Reference](../GETTING_STARTED.md#understanding-policies) — Write custom policies
+- [Policy Reference](/guide/getting-started.md#understanding-policies) — Write custom policies

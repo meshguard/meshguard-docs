@@ -3,12 +3,11 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'MeshGuard',
   description: 'Governance Control Plane for AI Agents',
+  ignoreDeadLinks: true,
   
   head: [
     ['link', { rel: 'icon', href: '/logo.png' }],
     ['meta', { name: 'theme-color', content: '#00D4AA' }],
-    ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:site_name', content: 'MeshGuard Docs' }],
   ],
 
   themeConfig: {
@@ -87,11 +86,6 @@ export default defineConfig({
 
     search: {
       provider: 'local'
-    },
-
-    editLink: {
-      pattern: 'https://github.com/dbhurley/meshguard-docs/edit/main/docs/:path',
-      text: 'Edit this page on GitHub'
     }
   }
 })

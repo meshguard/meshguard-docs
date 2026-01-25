@@ -2,14 +2,30 @@
 
 Get your AI agents governed with MeshGuard in minutes.
 
-## 1. Sign Up
+## 1. Create Your Account
 
-Create your MeshGuard account at [meshguard.app](https://meshguard.app).
+### Option A: Via Website (Recommended)
+Visit [meshguard.app](https://meshguard.app) and chat with Scout. Say **"Create account"** or **"Start free"** to begin.
 
 You'll receive:
-- **Gateway URL** — Your MeshGuard endpoint
-- **Admin Token** — For managing agents and policies
-- **Dashboard Access** — Visual management at [dashboard.meshguard.app](https://dashboard.meshguard.app)
+- **API Key** (`msk_...`) — Identifies your organization
+- **Admin Token** (`msat_...`) — For managing agents and policies
+- **Agent Token** (optional) — If you created a first agent
+
+::: warning Save Your Credentials
+These tokens are shown only once. Store them securely!
+:::
+
+### Option B: Via API
+```bash
+curl -X POST https://dashboard.meshguard.app/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Your Company",
+    "email": "you@company.com",
+    "agentName": "my-first-agent"
+  }'
+```
 
 ## 2. Install the SDK
 
@@ -18,48 +34,35 @@ pip install meshguard
 ```
 
 With LangChain support:
-
 ```bash
 pip install meshguard[langchain]
 ```
 
-## 3. Create Your First Agent
-
-Using the dashboard or API, create an agent:
+## 3. Configure Your Client
 
 ```python
 from meshguard import MeshGuardClient
 
-# Initialize with your admin token
 client = MeshGuardClient(
-    gateway_url="https://your-gateway.meshguard.app",
-    admin_token="your-admin-token",
+    gateway_url="https://dashboard.meshguard.app",
+    agent_token="your-agent-token",  # From signup
 )
-
-# Create an agent
-result = client.create_agent(
-    name="my-first-agent",
-    trust_tier="verified",
-    tags=["production"],
-)
-
-print(f"Agent ID: {result['id']}")
-print(f"Agent Token: {result['token']}")  # Save this!
 ```
 
-## 4. Use the Agent Token
-
-Now your agent can make governed requests:
+Or use environment variables:
+```bash
+export MESHGUARD_GATEWAY_URL="https://dashboard.meshguard.app"
+export MESHGUARD_AGENT_TOKEN="your-agent-token"
+```
 
 ```python
 from meshguard import MeshGuardClient
+client = MeshGuardClient()  # Auto-loads from env
+```
 
-# Initialize with agent token
-client = MeshGuardClient(
-    gateway_url="https://your-gateway.meshguard.app",
-    agent_token="your-agent-token",  # From step 3
-)
+## 4. Govern Your First Action
 
+```python
 # Check if an action is allowed
 decision = client.check("read:contacts")
 
@@ -70,35 +73,23 @@ else:
     print(f"❌ Denied: {decision.reason}")
 ```
 
-## 5. View Activity
+## 5. View Your Dashboard
 
-Visit your [dashboard](https://dashboard.meshguard.app) to see:
+Visit [dashboard.meshguard.app](https://dashboard.meshguard.app):
+
+1. Enter your **API Key** in the Gateway URL field (it auto-fills)
+2. Enter your **Admin Token**
+3. Click **Connect**
+
+You'll see:
 - Real-time audit log
-- Agent activity
-- Policy decisions
-- Statistics
-
-## Environment Variables
-
-For production, use environment variables:
-
-```bash
-export MESHGUARD_GATEWAY_URL="https://your-gateway.meshguard.app"
-export MESHGUARD_AGENT_TOKEN="your-agent-token"
-```
-
-Then simply:
-
-```python
-from meshguard import MeshGuardClient
-
-client = MeshGuardClient()  # Auto-loads from env
-decision = client.check("read:contacts")
-```
+- Your agents
+- Active policies
+- Usage statistics
 
 ## Next Steps
 
 - [Quick Start](/guide/quickstart) — 2-minute integration
-- [Python SDK Reference](/integrations/python) — Full SDK documentation
+- [Python SDK](/integrations/python) — Full SDK reference
 - [LangChain Integration](/integrations/langchain) — Govern LangChain agents
-- [Policies](/guide/policies) — Configure what agents can do
+- [Create Policies](/guide/policies) — Define what agents can do

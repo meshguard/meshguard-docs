@@ -2,69 +2,58 @@
 
 Govern your first agent in 2 minutes.
 
-## Install
+## 1. Sign Up
+
+Go to [meshguard.app](https://meshguard.app) → Chat **"Create account"** → Get credentials
+
+## 2. Install
 
 ```bash
 pip install meshguard
 ```
 
-## Connect
+## 3. Connect
 
 ```python
 from meshguard import MeshGuardClient
 
 client = MeshGuardClient(
-    gateway_url="https://dashboard.meshguard.app",  # Or your gateway
+    gateway_url="https://dashboard.meshguard.app",
     agent_token="your-agent-token",
 )
 ```
 
-## Check Permissions
+## 4. Check Permissions
 
 ```python
-# Check if an action is allowed
 decision = client.check("read:contacts")
 print(f"Allowed: {decision.allowed}")
 ```
 
-## Enforce Policies
+## 5. Enforce Policies
 
 ```python
 from meshguard import PolicyDeniedError
 
 try:
     client.enforce("write:email")
-    # Action allowed - send the email
-    send_email()
+    send_email()  # Only runs if allowed
 except PolicyDeniedError as e:
     print(f"Blocked: {e.reason}")
 ```
 
-## Govern Code Blocks
+## 6. Govern Code Blocks
 
 ```python
 with client.govern("delete:records"):
-    # Only runs if allowed
-    delete_old_records()
+    delete_old_records()  # Only runs if allowed
 ```
 
-## LangChain Integration
+## That's It! 🎉
 
-```python
-from meshguard.langchain import governed_tool
+Your agent is now governed. View activity at [dashboard.meshguard.app](https://dashboard.meshguard.app)
 
-@governed_tool("read:database")
-def query_database(sql: str) -> str:
-    return db.execute(sql)
-
-# Tool only runs if policy allows
-result = query_database("SELECT * FROM users")
-```
-
-## That's It!
-
-Your agent is now governed by MeshGuard policies.
-
+**Next:**
 - [Full SDK Reference →](/integrations/python)
 - [LangChain Guide →](/integrations/langchain)
 - [Policy Configuration →](/guide/policies)

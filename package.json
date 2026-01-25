@@ -1,0 +1,16 @@
+{
+  "name": "meshguard-docs",
+  "version": "1.0.0",
+  "description": "MeshGuard Documentation",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "keywords": ["meshguard", "docs", "ai", "governance"],
+  "author": "MeshGuard",
+  "license": "MIT",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

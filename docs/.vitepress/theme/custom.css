@@ -1,0 +1,60 @@
+/* MeshGuard Brand Colors */
+:root {
+  --vp-c-brand-1: #00D4AA;
+  --vp-c-brand-2: #00B894;
+  --vp-c-brand-3: #009975;
+  --vp-c-brand-soft: rgba(0, 212, 170, 0.14);
+  
+  /* Navy background for hero */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, #00D4AA 0%, #00B894 100%);
+  --vp-home-hero-image-background-image: linear-gradient(135deg, rgba(0, 212, 170, 0.2) 0%, rgba(0, 184, 148, 0.2) 100%);
+  --vp-home-hero-image-filter: blur(40px);
+}
+
+.dark {
+  --vp-c-bg: #0a0f1a;
+  --vp-c-bg-soft: #0d1424;
+  --vp-c-bg-mute: #1a2332;
+  --vp-c-bg-alt: #0d1424;
+  --vp-sidebar-bg-color: #0a0f1a;
+}
+
+/* Code blocks with terminal feel */
+.dark .vp-code-group .tabs label {
+  background-color: #0d1424;
+}
+
+.dark div[class*='language-'] {
+  background-color: #0d1424;
+}
+
+/* Teal accent for links */
+.vp-doc a {
+  color: var(--vp-c-brand-1);
+}
+
+/* Hero section styling */
+.VPHero .name {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+}
+
+/* Feature cards */
+.VPFeature {
+  border-color: var(--vp-c-brand-soft) !important;
+}
+
+.dark .VPFeature:hover {
+  border-color: var(--vp-c-brand-1) !important;
+}
+
+/* Button styling */
+.VPButton.brand {
+  background-color: var(--vp-c-brand-1);
+  border-color: var(--vp-c-brand-1);
+}
+
+.VPButton.brand:hover {
+  background-color: var(--vp-c-brand-2);
+  border-color: var(--vp-c-brand-2);
+}

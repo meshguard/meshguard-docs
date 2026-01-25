@@ -19,6 +19,7 @@ export default defineConfig({
       { text: 'Integrations', link: '/integrations/overview' },
       { text: 'API', link: '/api/overview' },
       { text: 'Dashboard', link: 'https://dashboard.meshguard.app' },
+      { text: 'Sign Up', link: 'https://meshguard.app' },
     ],
 
     sidebar: {
@@ -43,17 +44,21 @@ export default defineConfig({
         {
           text: 'Deployment',
           items: [
-            { text: 'Self-Hosted', link: '/guide/self-hosted' },
-            { text: 'Docker', link: '/guide/docker' },
+            { text: 'Enterprise', link: '/guide/enterprise' },
           ]
         }
       ],
       '/integrations/': [
         {
-          text: 'Integrations',
+          text: 'SDKs',
           items: [
             { text: 'Overview', link: '/integrations/overview' },
             { text: 'Python SDK', link: '/integrations/python' },
+          ]
+        },
+        {
+          text: 'Frameworks',
+          items: [
             { text: 'LangChain', link: '/integrations/langchain' },
             { text: 'CrewAI', link: '/integrations/crewai' },
             { text: 'AutoGPT', link: '/integrations/autogpt' },
@@ -69,14 +74,13 @@ export default defineConfig({
             { text: 'Authentication', link: '/api/authentication' },
             { text: 'Gateway Endpoints', link: '/api/gateway' },
             { text: 'Admin Endpoints', link: '/api/admin' },
-            { text: 'CLI Reference', link: '/api/cli' },
           ]
         }
       ]
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/dbhurley/meshguard' },
+      { icon: 'github', link: 'https://github.com/dbhurley/meshguard-python' },
     ],
 
     footer: {

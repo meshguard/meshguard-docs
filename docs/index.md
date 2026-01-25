@@ -13,27 +13,27 @@ hero:
       text: Get Started
       link: /guide/getting-started
     - theme: alt
-      text: View on GitHub
-      link: https://github.com/dbhurley/meshguard
+      text: View SDK
+      link: /integrations/python
 
 features:
   - icon: 🔐
     title: Agent Identity
-    details: Issue verifiable JWT credentials to agents with trust tiers. Know exactly who is making every request.
+    details: Issue verifiable credentials to agents with trust tiers. Know exactly who is making every request.
   - icon: 📋
     title: Policy Engine
-    details: Define YAML-based rules for what agents can and cannot do. Enforce at delegation boundaries.
+    details: Define rules for what agents can and cannot do. Enforce at delegation boundaries in real-time.
   - icon: 📊
     title: Audit Trail
     details: Capture complete execution traces with context propagation. Query and analyze agent behavior.
   - icon: ⚡
-    title: Real-time Enforcement
-    details: Sub-millisecond policy decisions. No performance penalty for governance.
+    title: Sub-ms Latency
+    details: Policy decisions in under 1ms. No performance penalty for governance.
   - icon: 🔗
     title: Easy Integration
-    details: Python SDK with LangChain, CrewAI, and AutoGPT support. Or use the HTTP API directly.
+    details: Python SDK with LangChain, CrewAI, and AutoGPT support. Or use the REST API directly.
   - icon: 🚨
-    title: Alerting
+    title: Real-time Alerting
     details: Get notified via webhook, Slack, or email when policies are violated.
 ---
 
@@ -47,7 +47,7 @@ pip install meshguard
 from meshguard import MeshGuardClient
 
 client = MeshGuardClient(
-    gateway_url="https://dashboard.meshguard.app",
+    gateway_url="https://your-gateway.meshguard.app",
     agent_token="your-token"
 )
 
@@ -67,4 +67,10 @@ When Agent A delegates to Agent B, traditional identity controls break down:
 - ❌ Incomplete audit trails across agent chains
 - ❌ Compliance risk for regulated industries
 
-MeshGuard fixes this by sitting between agents as a governance control plane.
+**MeshGuard fixes this** by providing a governance control plane purpose-built for AI agent ecosystems.
+
+## Trusted By
+
+MeshGuard is designed for teams building production AI agent systems in healthcare, finance, and enterprise environments.
+
+[Get Started →](/guide/getting-started)

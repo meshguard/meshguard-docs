@@ -1,13 +1,20 @@
 # API Reference
 
-MeshGuard provides both a Gateway API for agent requests and an Admin API for management.
+MeshGuard provides a REST API for agent governance and management.
 
-## Base URLs
+## Base URL
 
-| Environment | URL |
-|-------------|-----|
-| Sandbox | `https://dashboard.meshguard.app` |
-| Self-hosted | `http://localhost:3100` (default) |
+Your MeshGuard gateway URL (provided when you sign up):
+
+```
+https://your-gateway.meshguard.app
+```
+
+For the public sandbox:
+
+```
+https://dashboard.meshguard.app
+```
 
 ## Authentication
 
@@ -16,7 +23,7 @@ MeshGuard provides both a Gateway API for agent requests and an Admin API for ma
 Agents authenticate using JWT bearer tokens:
 
 ```bash
-curl https://dashboard.meshguard.app/proxy/endpoint \
+curl https://your-gateway.meshguard.app/proxy/endpoint \
   -H "Authorization: Bearer <agent-token>" \
   -H "X-MeshGuard-Action: read:contacts"
 ```
@@ -26,7 +33,7 @@ curl https://dashboard.meshguard.app/proxy/endpoint \
 Admin endpoints require an admin token header:
 
 ```bash
-curl https://dashboard.meshguard.app/admin/agents \
+curl https://your-gateway.meshguard.app/admin/agents \
   -H "X-Admin-Token: <admin-token>"
 ```
 
@@ -51,29 +58,19 @@ curl https://dashboard.meshguard.app/admin/agents \
 | GET | `/admin/audit` | Query audit log |
 | GET | `/admin/audit/stats` | Audit statistics |
 
-## Request Headers
+## Using the SDK
 
-| Header | Description | Required |
-|--------|-------------|----------|
-| `Authorization` | Bearer token for agent auth | Yes (proxy) |
-| `X-Admin-Token` | Admin token | Yes (admin) |
-| `X-MeshGuard-Action` | Action for policy evaluation | Yes (proxy) |
-| `X-MeshGuard-Resource` | Resource identifier | No |
-| `X-MeshGuard-Trace-ID` | Trace ID for correlation | No |
+We recommend using the [Python SDK](/integrations/python) instead of calling the API directly:
 
-## Response Codes
+```python
+from meshguard import MeshGuardClient
 
-| Code | Meaning |
-|------|---------|
-| 200 | Success |
-| 401 | Invalid or missing authentication |
-| 403 | Policy denied the action |
-| 429 | Rate limit exceeded |
-| 500 | Internal server error |
+client = MeshGuardClient()
+decision = client.check("read:contacts")
+```
 
 ## Detailed Documentation
 
 - [Authentication](/api/authentication)
 - [Gateway Endpoints](/api/gateway)
 - [Admin Endpoints](/api/admin)
-- [CLI Reference](/api/cli)

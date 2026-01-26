@@ -44,7 +44,14 @@ export default defineConfig({
         {
           text: 'Deployment',
           items: [
+            { text: 'Self-Hosted', link: '/guide/self-hosted' },
             { text: 'Enterprise', link: '/guide/enterprise' },
+          ]
+        },
+        {
+          text: 'Account',
+          items: [
+            { text: 'Billing & Subscriptions', link: '/guide/billing' },
           ]
         }
       ],
@@ -54,6 +61,7 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/integrations/overview' },
             { text: 'Python SDK', link: '/integrations/python' },
+            { text: 'JavaScript SDK', link: '/integrations/javascript' },
           ]
         },
         {
@@ -62,6 +70,7 @@ export default defineConfig({
             { text: 'LangChain', link: '/integrations/langchain' },
             { text: 'CrewAI', link: '/integrations/crewai' },
             { text: 'AutoGPT', link: '/integrations/autogpt' },
+            { text: 'Clawdbot', link: '/integrations/clawdbot' },
             { text: 'Generic HTTP', link: '/integrations/http' },
           ]
         }
@@ -74,6 +83,7 @@ export default defineConfig({
             { text: 'Authentication', link: '/api/authentication' },
             { text: 'Gateway Endpoints', link: '/api/gateway' },
             { text: 'Admin Endpoints', link: '/api/admin' },
+            { text: 'Billing API', link: '/api/billing' },
           ]
         }
       ]

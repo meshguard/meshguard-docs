@@ -323,3 +323,10 @@ See the `vertex-ai-multiagent` example in the MeshGuard examples repo for a work
 - MeshGuard checks for tool use + delegation
 - minimal test suite
 
+
+---
+
+## Related
+
+- Learn: Governing Google Vertex AI Agents with MeshGuard
+- Learn: MeshGuard vs Vertex AI Guardrails

@@ -5,21 +5,38 @@ description: "Deploy MeshGuard on your own infrastructure with Docker, Nginx, an
 
 # Self-Hosted Deployment
 
-Run the MeshGuard governance gateway on your own infrastructure for full data sovereignty. Available on **Professional** and **Enterprise** plans.
+Run the MeshGuard governance gateway on your own infrastructure for full data sovereignty.
+
+::: warning Enterprise Feature
+Self-hosted deployment is available on **Professional** and **Enterprise** plans only. It requires a signed license agreement with MeshGuard. Contact [contact@meshguard.app](mailto:contact@meshguard.app) to get started.
+:::
+
+## How It Works
+
+Once your license agreement is in place, our team will:
+
+1. **Provision access** to the private container registry with your licensed MeshGuard image
+2. **Provide a license key** for your deployment
+3. **Guide your setup** with deployment support included in your plan
 
 ## Docker Deployment
 
 ### Quick Start
 
 ```bash
+# Requires registry access — contact contact@meshguard.app
+docker login registry.meshguard.app
+docker pull registry.meshguard.app/meshguard:latest
+
 docker run -d \
   --name meshguard \
   -p 3000:3000 \
+  -e MESHGUARD_LICENSE_KEY="your-license-key" \
   -e JWT_SECRET="your-secure-secret-here" \
   -e ADMIN_TOKEN="your-admin-token" \
   -e MODE=enforce \
   -v meshguard-data:/data \
-  ghcr.io/meshguard/meshguard:latest
+  registry.meshguard.app/meshguard:latest
 ```
 
 ### Docker Compose
@@ -31,7 +48,7 @@ version: "3.8"
 
 services:
   meshguard:
-    image: ghcr.io/meshguard/meshguard:latest
+    image: registry.meshguard.app/meshguard:latest
     container_name: meshguard
     restart: unless-stopped
     ports:

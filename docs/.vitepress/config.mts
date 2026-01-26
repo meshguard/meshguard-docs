@@ -71,7 +71,11 @@ export default defineConfig({
             { text: 'CrewAI', link: '/integrations/crewai' },
             { text: 'AutoGPT', link: '/integrations/autogpt' },
             { text: 'Clawdbot', link: '/integrations/clawdbot' },
+            { text: 'Claude Code', link: '/integrations/claude-code' },
+            { text: 'OpenAI Agents', link: '/integrations/openai-agents' },
             { text: 'Semantic Kernel', link: '/integrations/semantic-kernel' },
+            { text: 'AWS Bedrock', link: '/integrations/bedrock' },
+            { text: 'Vertex AI', link: '/integrations/vertex-ai' },
             { text: 'Generic HTTP', link: '/integrations/http' },
           ]
         }

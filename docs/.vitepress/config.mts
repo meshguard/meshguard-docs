@@ -71,6 +71,7 @@ export default defineConfig({
             { text: 'CrewAI', link: '/integrations/crewai' },
             { text: 'AutoGPT', link: '/integrations/autogpt' },
             { text: 'Clawdbot', link: '/integrations/clawdbot' },
+            { text: 'Semantic Kernel', link: '/integrations/semantic-kernel' },
             { text: 'Generic HTTP', link: '/integrations/http' },
           ]
         }

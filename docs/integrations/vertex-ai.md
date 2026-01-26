@@ -1,691 +1,325 @@
-# Google Vertex AI Integration
+# Google Vertex AI (Agent Builder + ADK) + A2A governance with MeshGuard
 
-Integrate MeshGuard with Google Vertex AI Agent Builder, the Agent Development Kit (ADK), and the Agent2Agent (A2A) protocol for enterprise-grade governance of Google Cloud AI agents.
+MeshGuard adds **agent identity**, **policy enforcement**, and **auditing** on top of Google Vertex AI agents—especially when you operate a **multi-agent mesh** where agents delegate work to other agents (A2A / Agent-to-Agent).
 
-## Overview
+This guide shows:
 
-Google's AI agent ecosystem includes:
+- How to govern **Vertex AI agents built with Google’s Agent Development Kit (ADK)**
+- How to enforce policy on **A2A (Agent2Agent) communication**
+- How to attach **MeshGuard checks** to tools, delegation, and cross-agent messages
 
-- **Vertex AI Agent Builder** — Build and deploy agents on Google Cloud
-- **Agent Development Kit (ADK)** — Open-source Python framework for building agents
-- **Agent2Agent (A2A) Protocol** — Open protocol for cross-agent communication
+> Terminology
+>
+> - **Vertex AI Agent Builder**: Google’s managed agent orchestration/product surface.
+> - **ADK (Agent Development Kit)**: The Python SDK you use to implement agents and tools.
+> - **A2A (Agent2Agent)**: A pattern/protocol where one agent delegates tasks or sends messages to another agent.
+> - **MeshGuard**: Your governance layer. In this integration, MeshGuard acts as the **Policy Enforcement Point (PEP)**.
 
-MeshGuard adds governance across all three:
+---
 
-- **Agent identity** — Cryptographic identity for each ADK agent
-- **Tool governance** — Policy-based control over agent tool usage
-- **A2A delegation control** — Govern cross-agent communication via A2A
-- **Multi-vendor mesh** — Unified governance when Google agents interact with agents from other platforms
-- **Unified audit trail** — Centralized logging across your entire agent mesh
+## Why MeshGuard for Vertex AI multi-agent systems?
 
-### Vertex AI Safety vs MeshGuard
+Vertex AI provides strong safety controls (e.g., content safety filters, grounding tools, prompt/response moderation), but enterprise agent systems also need:
 
-Vertex AI includes built-in safety features — content filtering, grounding, citation verification, and responsible AI tools. MeshGuard complements these with **action governance**:
+- **Agent identity & authentication**: Which agent is acting? Which org/team owns it?
+- **Delegation controls**: Which agents may delegate to which other agents, and for what tasks?
+- **Tool/permission enforcement**: Can this agent call this tool *right now*, given the context?
+- **Unified audit** across vendors and runtimes (Vertex AI, internal services, other LLM stacks)
 
-| Concern | Vertex AI Safety | MeshGuard |
-|---------|-----------------|-----------|
-| Content filtering | ✅ Safety filters | — |
-| Grounding verification | ✅ Grounding API | — |
-| Action authorization | — | ✅ Core feature |
-| Agent identity | — | ✅ Tokens + trust tiers |
-| A2A delegation control | — | ✅ Permission ceilings |
-| Cross-platform audit | — | ✅ Unified audit log |
+MeshGuard provides these as a consistent layer, independent of the underlying model provider.
 
-**Use both:** Vertex AI safety for content integrity + MeshGuard for action governance.
+---
+
+## Architecture
+
+A common governance placement looks like:
+
+1. **Agent runtime** (ADK / Agent Builder)
+2. **MeshGuard check** before sensitive actions:
+   - tool invocation (e.g., CRM read)
+   - A2A send (delegate)
+   - A2A receive (accept delegation)
+3. **Execute** only if permitted
+4. **Log / audit** decision context + outcome
+
+MeshGuard is the policy enforcement point for:
+
+- `tool:*` permissions
+- `data:*` permissions
+- `a2a:*` permissions (cross-agent communication)
+
+---
 
 ## Prerequisites
 
 - Python 3.10+
-- Google Cloud account with Vertex AI enabled
-- `google-adk` installed
-- MeshGuard account ([sign up free](https://meshguard.app))
+- A Google Cloud project with Vertex AI enabled
+- Auth configured (one of):
+  - `gcloud auth application-default login` (dev)
+  - Workload Identity / Service Account JSON (prod)
+- MeshGuard agent token (per agent identity)
 
-## Installation
-
-```bash
-pip install meshguard google-adk google-cloud-aiplatform
-```
-
-## Quick Start: Governing ADK Agents
-
-### 1. Get Your Credentials
+Install dependencies:
 
 ```bash
-export MESHGUARD_GATEWAY_URL="https://dashboard.meshguard.app"
-export MESHGUARD_AGENT_TOKEN="your-vertex-agent-token"
-export GOOGLE_CLOUD_PROJECT="your-gcp-project"
-export GOOGLE_CLOUD_LOCATION="us-central1"
+pip install google-cloud-aiplatform meshguard
 ```
 
-### 2. Create a Governed ADK Agent
+Initialize Vertex AI:
 
 ```python
-from google.adk.agents import Agent
-from google.adk.tools import FunctionTool
-from meshguard import MeshGuardClient
-
-# Initialize MeshGuard
-mesh = MeshGuardClient()
-
-# Define governed tools
-def governed_tool(action: str, client: MeshGuardClient):
-    """Decorator to add MeshGuard governance to ADK tools."""
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            decision = client.check(
-                action=action,
-                context={"tool": func.__name__, "args": str(kwargs)[:200]},
-            )
-            if not decision.allowed:
-                return f"Action blocked by policy: {decision.reason}"
-            
-            result = func(*args, **kwargs)
-            
-            client.audit_log(
-                action=action,
-                decision="allowed",
-                metadata={"tool": func.__name__},
-            )
-            return result
-        
-        wrapper.__name__ = func.__name__
-        wrapper.__doc__ = func.__doc__
-        return wrapper
-    return decorator
-
-
-@governed_tool("read:database", client=mesh)
-def query_database(sql: str) -> str:
-    """Execute a read-only database query."""
-    # Your database query logic
-    return execute_query(sql)
-
-
-@governed_tool("read:web_search", client=mesh)
-def search_web(query: str) -> str:
-    """Search the web for information."""
-    return perform_search(query)
-
-
-@governed_tool("write:report", client=mesh)
-def save_report(title: str, content: str) -> str:
-    """Save a generated report."""
-    return save_to_storage(title, content)
-
-
-# Create the ADK agent with governed tools
-agent = Agent(
-    model="gemini-2.0-flash",
-    name="data_analyst",
-    instruction="""You are a data analyst agent. Your actions are governed by 
-    enterprise policy. If an action is blocked, explain the limitation and 
-    suggest alternatives.""",
-    tools=[
-        FunctionTool(query_database),
-        FunctionTool(search_web),
-        FunctionTool(save_report),
-    ],
-)
-```
-
-### 3. Run the Governed Agent
-
-```python
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-
-session_service = InMemorySessionService()
-runner = Runner(
-    agent=agent,
-    app_name="governed-analyst",
-    session_service=session_service,
-)
-
-# Create a session
-session = session_service.create_session(
-    app_name="governed-analyst",
-    user_id="analyst-user-001",
-)
-
-# Run the agent
-from google.genai import types
-
-response = runner.run(
-    user_id="analyst-user-001",
-    session_id=session.id,
-    new_message=types.Content(
-        role="user",
-        parts=[types.Part(text="Analyze Q4 revenue by region")],
-    ),
-)
-
-for event in response:
-    if event.is_final_response():
-        print(event.content.parts[0].text)
-```
-
-## Governing A2A (Agent2Agent) Communication
-
-The A2A protocol enables agents to discover and communicate with each other across platforms. MeshGuard acts as the **policy enforcement point** for A2A interactions.
-
-### A2A Agent Card with MeshGuard Governance
-
-```python
-from google.adk.agents import Agent
-from google.adk.tools import FunctionTool
-from meshguard import MeshGuardClient
-import json
-
-mesh = MeshGuardClient()
-
-# A2A Agent Card advertising governed capabilities
-AGENT_CARD = {
-    "name": "Data Analyst Agent",
-    "description": "Analyzes data and generates reports. All actions governed by MeshGuard.",
-    "url": "https://your-agent.example.com",
-    "version": "1.0.0",
-    "capabilities": {
-        "streaming": True,
-        "pushNotifications": False,
-    },
-    "skills": [
-        {
-            "id": "data-analysis",
-            "name": "Data Analysis",
-            "description": "Query databases and analyze data (governed)",
-            "tags": ["analytics", "governed"],
-        },
-        {
-            "id": "report-generation",
-            "name": "Report Generation",
-            "description": "Generate formatted reports (governed)",
-            "tags": ["reporting", "governed"],
-        },
-    ],
-    "authentication": {
-        "schemes": ["bearer"],
-        "credentials": "meshguard-token-required",
-    },
-}
-
-
-class GovernedA2AHandler:
-    """Handle incoming A2A requests with MeshGuard governance."""
-    
-    def __init__(self, mesh_client: MeshGuardClient):
-        self.mesh = mesh_client
-    
-    def handle_task(self, task_request: dict) -> dict:
-        """Process an A2A task request with governance."""
-        task_id = task_request.get("id", "")
-        sender = task_request.get("from", {})
-        skill_id = task_request.get("skill", "")
-        message = task_request.get("message", {})
-        
-        # Check if the requesting agent is authorized
-        decision = self.mesh.check(
-            action=f"a2a:receive:{skill_id}",
-            context={
-                "task_id": task_id,
-                "sender_name": sender.get("name", "unknown"),
-                "sender_url": sender.get("url", ""),
-                "skill": skill_id,
-            },
-        )
-        
-        if not decision.allowed:
-            return {
-                "id": task_id,
-                "status": {
-                    "state": "failed",
-                    "message": {
-                        "role": "agent",
-                        "parts": [{
-                            "type": "text",
-                            "text": f"Request denied by governance policy: {decision.reason}",
-                        }],
-                    },
-                },
-            }
-        
-        # Process the task
-        result = self._execute_skill(skill_id, message)
-        
-        # Log for audit
-        self.mesh.audit_log(
-            action=f"a2a:receive:{skill_id}",
-            decision="allowed",
-            metadata={
-                "task_id": task_id,
-                "sender": sender.get("name", "unknown"),
-                "skill": skill_id,
-            },
-        )
-        
-        return {
-            "id": task_id,
-            "status": {
-                "state": "completed",
-                "message": {
-                    "role": "agent",
-                    "parts": [{"type": "text", "text": result}],
-                },
-            },
-        }
-    
-    def _execute_skill(self, skill_id: str, message: dict) -> str:
-        """Execute an agent skill."""
-        # Your skill execution logic
-        pass
-
-
-class GovernedA2AClient:
-    """Send A2A requests with MeshGuard governance."""
-    
-    def __init__(self, mesh_client: MeshGuardClient):
-        self.mesh = mesh_client
-    
-    def send_task(
-        self,
-        target_url: str,
-        target_name: str,
-        skill_id: str,
-        message: str,
-    ) -> dict:
-        """Send a governed A2A task to another agent."""
-        import requests
-        import uuid
-        
-        task_id = str(uuid.uuid4())
-        
-        # Check if we're allowed to delegate to this agent
-        decision = self.mesh.check(
-            action=f"a2a:send:{skill_id}",
-            context={
-                "target_name": target_name,
-                "target_url": target_url,
-                "skill": skill_id,
-            },
-        )
-        
-        if not decision.allowed:
-            return {
-                "success": False,
-                "reason": f"Delegation to {target_name} blocked: {decision.reason}",
-            }
-        
-        # Send the A2A task
-        response = requests.post(
-            f"{target_url}/tasks/send",
-            json={
-                "id": task_id,
-                "message": {
-                    "role": "user",
-                    "parts": [{"type": "text", "text": message}],
-                },
-                "skill": skill_id,
-            },
-            headers={
-                "Authorization": f"Bearer {self.mesh.agent_token}",
-                "Content-Type": "application/json",
-            },
-        )
-        
-        # Log for audit
-        self.mesh.audit_log(
-            action=f"a2a:send:{skill_id}",
-            decision="allowed",
-            metadata={
-                "task_id": task_id,
-                "target": target_name,
-                "target_url": target_url,
-            },
-        )
-        
-        return {
-            "success": True,
-            "task_id": task_id,
-            "response": response.json(),
-        }
-```
-
-## Multi-Agent Mesh with A2A Governance
-
-Govern a mesh of agents from multiple vendors communicating via A2A:
-
-```python
-from meshguard import MeshGuardClient
-import uuid
-
-class GovernedAgentMesh:
-    """Multi-vendor agent mesh governed by MeshGuard."""
-    
-    def __init__(self, mesh_token: str):
-        self.mesh = MeshGuardClient(agent_token=mesh_token)
-        self.trace_id = str(uuid.uuid4())
-        self.agents: dict = {}
-    
-    def register_agent(self, name: str, url: str, skills: list[str]):
-        """Register an agent in the governed mesh."""
-        self.agents[name] = {"url": url, "skills": skills}
-    
-    def route_task(
-        self,
-        skill_needed: str,
-        message: str,
-        preferred_agent: str = None,
-    ) -> dict:
-        """Route a task to the best available agent with governance."""
-        # Find capable agents
-        candidates = []
-        for name, config in self.agents.items():
-            if skill_needed in config["skills"]:
-                candidates.append(name)
-        
-        if not candidates:
-            return {"success": False, "reason": f"No agent has skill: {skill_needed}"}
-        
-        # Try preferred agent first, then others
-        if preferred_agent and preferred_agent in candidates:
-            candidates.insert(0, candidates.pop(candidates.index(preferred_agent)))
-        
-        for agent_name in candidates:
-            # Check if routing to this agent is permitted
-            decision = self.mesh.check(
-                action=f"mesh:route:{skill_needed}",
-                context={
-                    "trace_id": self.trace_id,
-                    "target_agent": agent_name,
-                    "skill": skill_needed,
-                },
-            )
-            
-            if decision.allowed:
-                # Route the task
-                result = self._send_to_agent(agent_name, skill_needed, message)
-                return {
-                    "success": True,
-                    "agent": agent_name,
-                    "result": result,
-                    "trace_id": self.trace_id,
-                }
-        
-        return {
-            "success": False,
-            "reason": "No authorized agent available for this skill",
-            "candidates_checked": candidates,
-        }
-    
-    def _send_to_agent(self, agent_name: str, skill: str, message: str) -> dict:
-        """Send task to a specific agent."""
-        import requests
-        
-        config = self.agents[agent_name]
-        response = requests.post(
-            f"{config['url']}/tasks/send",
-            json={
-                "id": str(uuid.uuid4()),
-                "skill": skill,
-                "message": {
-                    "role": "user",
-                    "parts": [{"type": "text", "text": message}],
-                },
-            },
-            headers={
-                "Authorization": f"Bearer {self.mesh.agent_token}",
-                "X-MeshGuard-Trace": self.trace_id,
-            },
-        )
-        
-        return response.json()
-
-# Usage
-mesh = GovernedAgentMesh(mesh_token="mesh-orchestrator-token")
-
-# Register agents from different platforms
-mesh.register_agent(
-    "google-analyst",
-    "https://analyst.example.com",
-    ["data-analysis", "visualization"],
-)
-mesh.register_agent(
-    "aws-reporter",
-    "https://reporter.example.com",
-    ["report-generation", "data-analysis"],
-)
-mesh.register_agent(
-    "openai-summarizer",
-    "https://summarizer.example.com",
-    ["summarization", "translation"],
-)
-
-# Route a task — MeshGuard governs which agent gets it
-result = mesh.route_task(
-    skill_needed="data-analysis",
-    message="Analyze customer churn patterns for Q4",
-)
-```
-
-## Governing Vertex AI Agent Engine
-
-When deploying agents to Vertex AI Agent Engine (managed runtime), add MeshGuard governance:
-
-```python
-from google.adk.agents import Agent
-from google.adk.tools import FunctionTool
-from meshguard import MeshGuardClient
 import vertexai
-from vertexai import agent_engines
 
-# Initialize
-vertexai.init(project="your-project", location="us-central1")
-mesh = MeshGuardClient()
-
-# Create governed tools (same as above)
-@governed_tool("read:customer_data", client=mesh)
-def lookup_customer(customer_id: str) -> str:
-    """Look up customer by ID."""
-    return customer_db.get(customer_id)
-
-@governed_tool("write:ticket", client=mesh)
-def create_support_ticket(
-    customer_id: str,
-    subject: str,
-    description: str,
-    priority: str,
-) -> str:
-    """Create a support ticket."""
-    return ticket_system.create(customer_id, subject, description, priority)
-
-# Create the agent
-agent = Agent(
-    model="gemini-2.0-flash",
-    name="support_agent",
-    instruction="You are a customer support agent. All actions are governed by policy.",
-    tools=[
-        FunctionTool(lookup_customer),
-        FunctionTool(create_support_ticket),
-    ],
+vertexai.init(
+    project="YOUR_GCP_PROJECT_ID",
+    location="us-central1",
 )
-
-# Deploy to Agent Engine
-deployed_agent = agent_engines.create(
-    agent_engine=agent,
-    display_name="Governed Support Agent",
-    description="Customer support agent with MeshGuard governance",
-)
-
-print(f"Deployed agent: {deployed_agent.resource_name}")
 ```
 
-## Handling Denied Actions
+---
+
+## MeshGuard client setup (per agent)
+
+Each running agent should authenticate to MeshGuard with its own **agent token**. This ensures audits and policy are tied to an agent identity.
 
 ```python
 from meshguard import MeshGuardClient
 
-mesh = MeshGuardClient()
-
-def governed_tool_with_fallback(action: str, client: MeshGuardClient):
-    """Governance decorator with helpful denial messages."""
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            decision = client.check(
-                action=action,
-                context={"tool": func.__name__},
-            )
-            
-            if not decision.allowed:
-                return (
-                    f"⚠️ I'm unable to perform this action.\n"
-                    f"Reason: {decision.reason}\n"
-                    f"This has been logged for review. A human team member "
-                    f"can assist with this request."
-                )
-            
-            result = func(*args, **kwargs)
-            
-            client.audit_log(
-                action=action,
-                decision="allowed",
-                metadata={"tool": func.__name__},
-            )
-            return result
-        
-        wrapper.__name__ = func.__name__
-        wrapper.__doc__ = func.__doc__
-        return wrapper
-    return decorator
+meshguard = MeshGuardClient(
+    gateway_url="https://dashboard.meshguard.app",
+    agent_token="YOUR_AGENT_TOKEN",
+)
 ```
 
-## Audit Trail
+---
 
-Every governed action is logged with full context:
+## Pattern 1: Govern tool calls inside an ADK agent
+
+Wrap every sensitive tool call with a MeshGuard check.
+
+### Example: a governed CRM read tool
 
 ```python
-# Get recent actions
-audit = mesh.get_audit_log(limit=10)
+from typing import Any, Dict
+from meshguard import MeshGuardClient
 
-for entry in audit:
-    print(f"{entry['timestamp']} - {entry['action']} - {entry['decision']}")
+class CRMTool:
+    def __init__(self, meshguard: MeshGuardClient):
+        self.meshguard = meshguard
+
+    def read_contact(self, contact_id: str, *, actor: str) -> Dict[str, Any]:
+        # PEP: enforce policy *before* accessing data
+        decision = self.meshguard.check(
+            "read:contacts",
+            context={
+                "actor": actor,
+                "resource": {"type": "contact", "id": contact_id},
+                "tool": "crm.read_contact",
+            },
+        )
+        if not decision.get("allow", False):
+            raise PermissionError(f"MeshGuard denied read:contacts: {decision}")
+
+        # Your real CRM call here
+        return {"id": contact_id, "name": "Ada Lovelace", "email": "ada@example.com"}
 ```
 
-Or via CLI:
-```bash
-meshguard audit query --agent vertex-ai-support
-meshguard audit trace <trace-id>
-```
+### Calling the tool from a Vertex AI Gemini model flow
 
-## Configuration Reference
-
-### Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `MESHGUARD_GATEWAY_URL` | MeshGuard gateway URL |
-| `MESHGUARD_AGENT_TOKEN` | Agent authentication token |
-| `MESHGUARD_ADMIN_TOKEN` | Admin token (for management APIs) |
-| `GOOGLE_CLOUD_PROJECT` | Google Cloud project ID |
-| `GOOGLE_CLOUD_LOCATION` | Google Cloud region |
-
-### Policy Example
-
-```yaml
-name: vertex-ai-agent-policy
-version: "1.0"
-description: Policy for Vertex AI agents with A2A governance
-
-appliesTo:
-  tags:
-    - vertex-ai
-    - support
-
-rules:
-  # Allow customer data reads
-  - effect: allow
-    actions:
-      - "read:customer_data"
-      - "read:order_history"
-
-  # Allow ticket creation
-  - effect: allow
-    actions:
-      - "write:ticket"
-
-  # Allow A2A communication with known agents
-  - effect: allow
-    actions:
-      - "a2a:send:*"
-    conditions:
-      target_agent:
-        - "google-analyst"
-        - "report-writer"
-
-  # Block A2A communication with unknown agents
-  - effect: deny
-    actions:
-      - "a2a:send:*"
-    reason: "A2A communication limited to approved agents"
-
-  # Allow receiving A2A tasks for registered skills
-  - effect: allow
-    actions:
-      - "a2a:receive:data-analysis"
-      - "a2a:receive:report-generation"
-
-defaultEffect: deny
-
-delegation:
-  maxDepth: 3
-  permissionCeiling:
-    - "read:*"
-    - "write:ticket"
-```
-
-## Troubleshooting
-
-### ADK agent not receiving governance context
-
-Ensure the MeshGuard client is initialized before creating the agent:
+The `google-cloud-aiplatform` package provides the `vertexai` Python module.
 
 ```python
-# ✅ Correct: Initialize MeshGuard first
-mesh = MeshGuardClient()
+import vertexai
+from vertexai.generative_models import GenerativeModel
 
-@governed_tool("read:data", client=mesh)
-def my_tool(query: str) -> str:
-    return do_query(query)
+from meshguard import MeshGuardClient
 
-agent = Agent(tools=[FunctionTool(my_tool)])
+vertexai.init(project="YOUR_GCP_PROJECT_ID", location="us-central1")
+model = GenerativeModel("gemini-1.5-pro")
+
+meshguard = MeshGuardClient(
+    gateway_url="https://dashboard.meshguard.app",
+    agent_token="YOUR_AGENT_TOKEN",
+)
+
+crm = CRMTool(meshguard)
+
+prompt = "Fetch contact 123 and summarize the email domain."  # example
+response = model.generate_content(prompt)
+
+# In a real agent, you would parse tool intents and route to crm.read_contact
+contact = crm.read_contact("123", actor="vertex-agent-1")
+summary = f"{contact['email'].split('@')[-1]}"
+print(summary)
 ```
 
-### A2A tasks failing with authentication errors
+---
 
-Ensure your A2A requests include the MeshGuard token:
+## Pattern 2: Govern A2A (Agent2Agent) delegation with MeshGuard
+
+When an agent delegates work to another agent, you should govern both sides:
+
+- **Sender**: Is agent A allowed to delegate this task to agent B?
+- **Receiver**: Is agent B allowed to accept tasks of this type from agent A?
+
+This is where MeshGuard becomes a **policy enforcement point** for A2A.
+
+### A2A envelope (minimal)
+
+Use a structured envelope so policy can reason about what’s happening:
 
 ```python
-headers = {
-    "Authorization": f"Bearer {mesh.agent_token}",
-    "X-MeshGuard-Trace": trace_id,
-}
+from dataclasses import dataclass
+from typing import Any, Dict, Optional
+
+@dataclass
+class A2AMessage:
+    id: str
+    sender: str
+    recipient: str
+    intent: str                # e.g. "research:vendor"
+    payload: Dict[str, Any]
+    trace_id: Optional[str] = None
 ```
 
-### Agent Engine deployment not picking up governance
-
-When deploying to Agent Engine, ensure governance is embedded in the tool functions, not as middleware:
+### Sender-side enforcement (`a2a:send`)
 
 ```python
-# ✅ Governance in the tool itself
-@governed_tool("read:data", client=mesh)
-def my_tool(query: str) -> str:
-    return do_query(query)
+from meshguard import MeshGuardClient
 
-# ❌ External middleware won't deploy to Agent Engine
+def a2a_send(meshguard: MeshGuardClient, msg: A2AMessage) -> None:
+    decision = meshguard.check(
+        "a2a:send",
+        context={
+            "sender": msg.sender,
+            "recipient": msg.recipient,
+            "intent": msg.intent,
+            "trace_id": msg.trace_id,
+        },
+    )
+    if not decision.get("allow", False):
+        raise PermissionError(f"MeshGuard denied a2a:send: {decision}")
+
+    # Transport is up to you (HTTP, Pub/Sub, gRPC, etc.)
+    # Example placeholder:
+    # http_client.post(recipient_url, json=asdict(msg))
+    print(f"A2A SEND -> {msg.recipient}: {msg.intent}")
 ```
 
-## Next Steps
+### Receiver-side enforcement (`a2a:receive`)
 
-- [Python SDK Reference](/integrations/python) — Full SDK documentation
-- [Policy Configuration](/guide/policies) — Define what agents can do
-- [Bedrock Integration](/integrations/bedrock) — For AWS Bedrock agents
-- [OpenAI Agents Integration](/integrations/openai-agents) — For OpenAI Agents SDK
-- [API Reference](/api/overview) — Direct API access
+```python
+from meshguard import MeshGuardClient
+
+def a2a_receive(meshguard: MeshGuardClient, msg: A2AMessage) -> None:
+    decision = meshguard.check(
+        "a2a:receive",
+        context={
+            "sender": msg.sender,
+            "recipient": msg.recipient,
+            "intent": msg.intent,
+            "trace_id": msg.trace_id,
+        },
+    )
+    if not decision.get("allow", False):
+        raise PermissionError(f"MeshGuard denied a2a:receive: {decision}")
+
+    print(f"A2A RECV <- {msg.sender}: {msg.intent}")
+```
+
+---
+
+## Pattern 3: Govern ADK agent-to-agent tools (recommended placement)
+
+In ADK, “delegation” is often just another tool call (e.g., a tool that sends a task to another agent). The simplest integration strategy is:
+
+- implement a `delegate_to_agent()` tool
+- enforce MeshGuard before sending
+- enforce MeshGuard when the recipient receives
+
+### Delegation tool example
+
+```python
+import uuid
+from meshguard import MeshGuardClient
+
+class DelegationTool:
+    def __init__(self, meshguard: MeshGuardClient, *, sender: str):
+        self.meshguard = meshguard
+        self.sender = sender
+
+    def delegate(self, *, recipient: str, intent: str, payload: dict, trace_id: str | None = None) -> dict:
+        msg = {
+            "id": str(uuid.uuid4()),
+            "sender": self.sender,
+            "recipient": recipient,
+            "intent": intent,
+            "payload": payload,
+            "trace_id": trace_id,
+        }
+
+        decision = self.meshguard.check(
+            "a2a:send",
+            context={
+                "sender": self.sender,
+                "recipient": recipient,
+                "intent": intent,
+                "trace_id": trace_id,
+            },
+        )
+        if not decision.get("allow", False):
+            return {"ok": False, "error": "denied", "decision": decision}
+
+        # Send via your transport
+        # transport.send(msg)
+        return {"ok": True, "message": msg}
+```
+
+---
+
+## Policy guidance: what to model in MeshGuard
+
+Typical actions to define:
+
+- `tool:crm.read_contact`
+- `data:contacts.read`
+- `a2a:send`
+- `a2a:receive`
+- `a2a:delegate:<intent>` (optional, for finer-grained control)
+
+Useful context fields:
+
+- `sender`, `recipient`
+- `intent` (task class)
+- `trace_id` (request lineage)
+- `resource` (data id/type)
+- `environment` (dev/prod)
+
+---
+
+## Observability & audit
+
+MeshGuard decisions should be logged with:
+
+- agent id / token identity
+- action (`a2a:send`, `read:contacts`, etc.)
+- key context fields (resource, recipient, intent)
+- allow/deny outcome and reason
+
+This enables:
+
+- incident response for delegation misuse
+- demonstrating least-privilege controls
+- cross-vendor audits when your mesh spans Vertex + other systems
+
+---
+
+## End-to-end example
+
+See the `vertex-ai-multiagent` example in the MeshGuard examples repo for a working reference architecture:
+
+- multiple in-process agents
+- A2A envelopes
+- MeshGuard checks for tool use + delegation
+- minimal test suite
+

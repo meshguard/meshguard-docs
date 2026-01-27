@@ -38,6 +38,7 @@ export default defineConfig({
             { text: 'Agent Identity', link: '/guide/identity' },
             { text: 'Policies', link: '/guide/policies' },
             { text: 'Audit Logging', link: '/guide/audit' },
+            { text: 'Analytics Dashboard', link: '/guide/analytics' },
             { text: 'Alerting', link: '/guide/alerting' },
           ]
         },
@@ -88,6 +89,7 @@ export default defineConfig({
             { text: 'Authentication', link: '/api/authentication' },
             { text: 'Gateway Endpoints', link: '/api/gateway' },
             { text: 'Admin Endpoints', link: '/api/admin' },
+            { text: 'Analytics API', link: '/api/analytics' },
             { text: 'Billing API', link: '/api/billing' },
           ]
         }

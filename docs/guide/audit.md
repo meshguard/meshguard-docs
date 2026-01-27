@@ -79,3 +79,7 @@ By default, audit logs are stored in SQLite. Configure retention with:
 ```bash
 AUDIT_RETENTION_DAYS=90
 ```
+
+## Analytics Dashboard
+
+Audit data powers the [Analytics Dashboard](/guide/analytics), which aggregates your audit trail into actionable metrics — request volume trends, per-agent breakdowns, policy enforcement rates, delegation tracking, and more. If you're looking for patterns rather than individual log entries, the analytics dashboard is the place to start.

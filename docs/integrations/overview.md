@@ -22,9 +22,12 @@ pip install meshguard[langchain]  # With LangChain support
 | LangChain | ✅ Supported | [LangChain Guide](/integrations/langchain) |
 | CrewAI | ✅ Supported | [CrewAI Guide](/integrations/crewai) |
 | AutoGPT | ✅ Supported | [AutoGPT Guide](/integrations/autogpt) |
+| Claude Code | ✅ Supported | [Claude Code Guide](/integrations/claude-code) |
 | Amazon Bedrock Agents | ✅ Supported | [Bedrock Guide](/integrations/bedrock) |
 | Google Vertex AI / ADK | ✅ Supported | [Vertex AI Guide](/integrations/vertex-ai) |
 | OpenAI Agents SDK | ✅ Supported | [OpenAI Agents Guide](/integrations/openai-agents) |
+| Clawdbot | ✅ Supported | [Clawdbot Guide](/integrations/clawdbot) |
+| Microsoft Semantic Kernel | ✅ Supported | [Semantic Kernel Guide](/integrations/semantic-kernel) |
 | Generic HTTP | ✅ Supported | [HTTP Guide](/integrations/http) |
 
 ## Quick Example

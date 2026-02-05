@@ -3,6 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'MeshGuard',
   description: 'Governance Control Plane for AI Agents',
+  cleanUrls: true,
   ignoreDeadLinks: true,
   
   head: [

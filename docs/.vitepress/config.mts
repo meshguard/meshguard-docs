@@ -71,6 +71,7 @@ export default defineConfig({
             { text: 'LangChain', link: '/integrations/langchain' },
             { text: 'CrewAI', link: '/integrations/crewai' },
             { text: 'AutoGPT', link: '/integrations/autogpt' },
+            { text: 'OpenClaw', link: '/integrations/openclaw' },
             { text: 'Clawdbot', link: '/integrations/clawdbot' },
             { text: 'Claude Code', link: '/integrations/claude-code' },
             { text: 'OpenAI Agents', link: '/integrations/openai-agents' },

@@ -41,6 +41,7 @@ export default defineConfig({
             { text: 'Audit Logging', link: '/guide/audit' },
             { text: 'Analytics Dashboard', link: '/guide/analytics' },
             { text: 'Alerting', link: '/guide/alerting' },
+            { text: 'CLI Reference', link: '/guide/cli' },
           ]
         },
         {
@@ -64,6 +65,7 @@ export default defineConfig({
             { text: 'Overview', link: '/integrations/overview' },
             { text: 'Python SDK', link: '/integrations/python' },
             { text: 'JavaScript SDK', link: '/integrations/javascript' },
+            { text: '.NET SDK', link: '/integrations/dotnet' },
           ]
         },
         {

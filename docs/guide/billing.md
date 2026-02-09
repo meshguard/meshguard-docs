@@ -11,29 +11,28 @@ MeshGuard offers tiered plans for individuals, teams, and enterprises. All paid 
 
 | Feature | Free | Starter | Professional | Enterprise |
 |---------|------|---------|-------------|------------|
-| **Price (monthly)** | $0 | $29/mo | $99/mo | Custom |
-| **Price (annual)** | $0 | $278/yr | $950/yr | Custom |
-| **Agents** | 2 | 10 | 50 | Unlimited |
-| **Policy checks/mo** | 1,000 | 25,000 | 250,000 | Unlimited |
-| **Policies** | 3 | 25 | Unlimited | Unlimited |
-| **Audit log retention** | 7 days | 30 days | 90 days | Custom |
-| **Team members** | 1 | 5 | 25 | Unlimited |
-| **Custom policies** | ✗ | ✓ | ✓ | ✓ |
+| **Price (monthly)** | $0 | $2,000/mo | $10,000/mo | Custom |
+| **Price (annual)** | $0 | $19,200/yr | $96,000/yr | Custom |
+| **Agents** | 5 | 50 | 500 | Unlimited |
+| **Delegations/mo** | 10,000 | 100,000 | 1,000,000 | Unlimited |
+| **Policies** | 3 | 20 | Unlimited | Unlimited |
+| **Audit log retention** | 7 days | 30 days | 1 year | Custom |
 | **Webhook alerts** | ✗ | ✓ | ✓ | ✓ |
-| **Delegation chains** | ✗ | ✗ | ✓ | ✓ |
-| **SSO/SAML** | ✗ | ✗ | ✗ | ✓ |
-| **Self-hosted** | ✗ | ✗ | ✓ | ✓ |
+| **Slack alerts** | ✗ | ✗ | ✓ | ✓ |
+| **SSO/SAML** | ✗ | ✗ | ✓ | ✓ |
+| **On-premise deployment** | ✗ | ✗ | ✗ | ✓ |
 | **Dedicated support** | ✗ | ✗ | ✗ | ✓ |
-| **SLA** | ✗ | ✗ | 99.9% | 99.99% |
-| **Support** | Community | Email | Priority email | Dedicated Slack |
+| **Custom SLA** | ✗ | ✗ | ✗ | ✓ |
+| **HIPAA & ISO 27001** | ✗ | ✗ | ✗ | ✓ |
+| **Support** | Community | Email | Priority | Dedicated engineer |
 
 Annual billing saves **20%** compared to monthly.
 
 ## Feature Limits
 
-### Policy Checks
+### Delegations
 
-Each call to `client.check()`, `client.enforce()`, or the `/proxy/*` gateway endpoint counts as one policy check. Health checks and audit queries do not count.
+A delegation is any action an agent requests through MeshGuard — tool calls, API invocations, data access, or any governed operation. Each policy evaluation counts as one delegation. Health checks and audit queries do not count.
 
 When you reach your plan's limit, behavior depends on your configuration:
 

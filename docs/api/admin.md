@@ -55,6 +55,61 @@ Response:
 GET /admin/agents/:id
 ```
 
+### Update Agent
+
+<Badge type="tip" text="v1.1.0" />
+
+Partially update an agent's properties.
+
+```bash
+PATCH /admin/agents/:id
+Content-Type: application/json
+
+{
+  "name": "updated-name",
+  "trustTier": "trusted",
+  "tags": ["production", "api-access"],
+  "metadata": {
+    "team": "platform",
+    "owner": "alice@example.com"
+  }
+}
+```
+
+All fields are optional — only include what you want to update.
+
+**Trust Tiers:**
+| Tier | Description |
+|------|-------------|
+| `unverified` | New agents, minimal permissions |
+| `verified` | Identity confirmed, standard permissions |
+| `trusted` | Elevated trust, expanded permissions |
+| `privileged` | Highest trust, administrative access |
+
+**Response (200):**
+```json
+{
+  "id": "agent_abc123",
+  "name": "updated-name",
+  "trustTier": "trusted",
+  "tags": ["production", "api-access"],
+  "metadata": {
+    "team": "platform",
+    "owner": "alice@example.com"
+  },
+  "updatedAt": "2026-02-09T17:30:00.000Z"
+}
+```
+
+**Errors:**
+| Code | Reason |
+|------|--------|
+| `404` | Agent not found |
+| `403` | Agent belongs to different organization |
+| `400` | Invalid trust tier or malformed request |
+
+Changes are logged to the admin audit log with the previous and new values.
+
 ### Revoke Agent
 
 ```bash

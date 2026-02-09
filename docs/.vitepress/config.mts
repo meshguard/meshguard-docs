@@ -56,6 +56,12 @@ export default defineConfig({
           items: [
             { text: 'Billing & Subscriptions', link: '/guide/billing' },
           ]
+        },
+        {
+          text: 'Release Notes',
+          items: [
+            { text: 'Changelog', link: '/guide/changelog' },
+          ]
         }
       ],
       '/integrations/': [

@@ -148,23 +148,38 @@ meshguard policy validate <file.yaml>
 
 ### Test Policy
 
-Test how a policy evaluates for a specific agent and action:
+<Badge type="tip" text="Enhanced in v1.1.0" />
+
+Test how policies evaluate for agents and actions. Supports interactive testing, batch testing from files, and CI/CD integration.
 
 ```bash
-meshguard policy test <agent-id> <action> [options]
+meshguard policy test [options]
 ```
 
-Examples:
-```bash
-# Test read action
-meshguard policy test agent_abc123 read:contacts
+**Options:**
+| Option | Description |
+|--------|-------------|
+| `--agent <id>` | Agent ID or name to test |
+| `--action <action>` | Action to test (e.g., `read:contacts`) |
+| `--context <json>` | JSON context for the request |
+| `--file <path>` | YAML file with test cases for batch testing |
+| `--policy <name>` | Test against specific policy (skips other policies) |
+| `--json` | Output results as JSON (for CI/CD) |
+| `--verbose` | Show detailed evaluation trace |
 
-# Test with resource
-meshguard policy test agent_abc123 write:email --resource "user@external.com"
+#### Interactive Testing
+
+```bash
+# Basic test
+meshguard policy test --agent agent_abc123 --action read:contacts
 
 # Test with context
-meshguard policy test agent_abc123 execute:command \
+meshguard policy test --agent agent_abc123 --action execute:command \
   --context '{"command": "rm -rf /"}'
+
+# Test against specific policy
+meshguard policy test --agent agent_abc123 --action write:email \
+  --policy email-restrictions
 ```
 
 Output:
@@ -173,6 +188,126 @@ Decision: DENY
 Policy:   production-policy
 Rule:     block-destructive-commands
 Reason:   Destructive commands are not allowed
+```
+
+#### Batch Testing from YAML
+
+Create a test file (`tests.yaml`):
+```yaml
+tests:
+  - name: "Allow reading contacts"
+    agent: agent_abc123
+    action: read:contacts
+    expect: allow
+
+  - name: "Block destructive commands"
+    agent: agent_abc123
+    action: execute:command
+    context:
+      command: "rm -rf /"
+    expect: deny
+
+  - name: "Allow trusted agent to send email"
+    agent: agent_trusted
+    action: write:email
+    context:
+      recipient: "user@company.com"
+    expect: allow
+```
+
+Run batch tests:
+```bash
+meshguard policy test --file tests.yaml
+```
+
+Output:
+```
+Running 3 tests...
+
+✓ Allow reading contacts                    PASS (allowed)
+✓ Block destructive commands                PASS (denied)
+✗ Allow trusted agent to send email         FAIL (expected: allow, got: deny)
+
+Results: 2 passed, 1 failed
+```
+
+#### CI/CD Integration
+
+Use `--json` output for automated pipelines:
+
+```bash
+meshguard policy test --file tests.yaml --json
+```
+
+```json
+{
+  "summary": {
+    "total": 3,
+    "passed": 2,
+    "failed": 1
+  },
+  "results": [
+    {
+      "name": "Allow reading contacts",
+      "passed": true,
+      "decision": "allow",
+      "expected": "allow"
+    },
+    {
+      "name": "Block destructive commands", 
+      "passed": true,
+      "decision": "deny",
+      "expected": "deny"
+    },
+    {
+      "name": "Allow trusted agent to send email",
+      "passed": false,
+      "decision": "deny",
+      "expected": "allow",
+      "policy": "email-policy",
+      "reason": "External emails require privileged tier"
+    }
+  ]
+}
+```
+
+**Exit Codes for CI/CD:**
+| Code | Meaning |
+|------|---------|
+| `0` | All tests passed (or single test allowed) |
+| `1` | One or more tests failed (or single test denied) |
+| `2` | Error (invalid file, bad syntax, etc.) |
+
+**GitHub Actions Example:**
+```yaml
+- name: Test MeshGuard Policies
+  run: meshguard policy test --file policy-tests.yaml --json
+  env:
+    MESHGUARD_API_KEY: ${{ secrets.MESHGUARD_API_KEY }}
+```
+
+#### Verbose Output
+
+Use `--verbose` for detailed evaluation trace:
+
+```bash
+meshguard policy test --agent agent_abc123 --action delete:records --verbose
+```
+
+```
+Evaluating: agent_abc123 → delete:records
+Agent Trust Tier: verified
+Matching Policies: production-policy, data-retention
+
+Policy: production-policy
+  Rule 1: allow read:* → SKIP (action mismatch)
+  Rule 2: deny delete:* → MATCH
+    Effect: deny
+    Reason: Deletion not allowed in production
+
+Final Decision: DENY
+Matched Policy: production-policy
+Matched Rule: Rule 2
 ```
 
 ### Delete Policy

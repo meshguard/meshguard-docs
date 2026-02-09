@@ -32,9 +32,9 @@ Create agents in MeshGuard for each crew member:
 
 ```bash
 # Create agents with different trust levels
-bun run src/cli/index.ts agent create researcher --trust verified --tags crewai,research
-bun run src/cli/index.ts agent create writer --trust verified --tags crewai,content
-bun run src/cli/index.ts agent create reviewer --trust trusted --tags crewai,review
+meshguard agent create researcher --trust verified --tags crewai,research
+meshguard agent create writer --trust verified --tags crewai,content
+meshguard agent create reviewer --trust trusted --tags crewai,review
 ```
 
 ### 2. Create Policies

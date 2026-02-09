@@ -155,6 +155,21 @@ print(f"Agent ID: {result['id']}")
 print(f"Token: {result['token']}")
 ```
 
+### Update Agent
+
+Update an existing agent's properties.
+
+```python
+client.update_agent(
+    agent_id="agent_abc123",
+    trust_tier="verified",  # optional
+    tags=["tag1", "tag2"],  # optional
+    metadata={"key": "value"}  # optional
+)
+```
+
+All parameters except `agent_id` are optional — only include what you want to change.
+
 ### Revoke Agent
 
 ```python

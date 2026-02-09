@@ -120,9 +120,9 @@ MESHGUARD_ADMIN_TOKEN="msat_xxx"
 Then use the CLI:
 
 ```bash
-meshguard-cli.sh status
-meshguard-cli.sh agents list
-meshguard-cli.sh policies list
+meshguard status
+meshguard agents list
+meshguard policies list
 ```
 
 ## SDK Configuration

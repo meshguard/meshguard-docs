@@ -52,6 +52,7 @@ curl https://your-gateway.meshguard.app/admin/agents \
 | GET | `/admin/agents` | List agents |
 | POST | `/admin/agents` | Create agent |
 | GET | `/admin/agents/:id` | Get agent |
+| PATCH | `/admin/agents/:id` | Update agent |
 | DELETE | `/admin/agents/:id` | Revoke agent |
 | GET | `/admin/policies` | List policies |
 | GET | `/admin/policies/:name` | Get policy |

@@ -33,7 +33,7 @@ This guide covers both.
 
 ```bash
 # Create an agent with appropriate trust level
-bun run src/cli/index.ts agent create autogpt-agent \
+meshguard agent create autogpt-agent \
   --trust verified \
   --tags autogpt,autonomous
 
@@ -583,20 +583,20 @@ humanInTheLoop:
 
 ```bash
 # Follow the audit log in real-time
-bun run src/cli/index.ts audit tail --follow --agent autogpt-agent
+meshguard audit tail --follow --agent autogpt-agent
 
 # Watch for policy denials
-bun run src/cli/index.ts audit tail --follow --decision deny
+meshguard audit tail --follow --decision deny
 ```
 
 ### Rate Limit Alerts
 
 ```bash
 # Check current rate usage
-bun run src/cli/index.ts audit stats --agent autogpt-agent --period 1
+meshguard audit stats --agent autogpt-agent --period 1
 
 # See hourly breakdown
-bun run src/cli/index.ts audit stats --agent autogpt-agent --period 24 --breakdown hourly
+meshguard audit stats --agent autogpt-agent --period 24 --breakdown hourly
 ```
 
 ### Emergency Revocation
@@ -605,7 +605,7 @@ If an agent is misbehaving:
 
 ```bash
 # Immediately revoke the agent
-bun run src/cli/index.ts agent revoke autogpt-agent
+meshguard agent revoke autogpt-agent
 
 # The agent's next request will receive 401 Unauthorized
 ```
@@ -692,7 +692,7 @@ Token expired or invalid:
 
 ```bash
 # Generate new token
-bun run src/cli/index.ts agent token autogpt-agent
+meshguard agent token autogpt-agent
 
 # Update environment
 export MESHGUARD_TOKEN="new-token"
@@ -704,10 +704,10 @@ Check your policy:
 
 ```bash
 # See what actions are allowed
-bun run src/cli/index.ts policy allowed autogpt-agent
+meshguard policy allowed autogpt-agent
 
 # Test a specific action
-bun run src/cli/index.ts policy test autogpt-agent "browse:web"
+meshguard policy test autogpt-agent "browse:web"
 ```
 
 ### Rate Limited
@@ -716,7 +716,7 @@ Adjust rate limits in policy or wait:
 
 ```bash
 # Check current usage
-bun run src/cli/index.ts audit stats --agent autogpt-agent --period 1
+meshguard audit stats --agent autogpt-agent --period 1
 ```
 
 ### Plugin Not Loading

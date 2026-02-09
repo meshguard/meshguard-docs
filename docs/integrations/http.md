@@ -24,7 +24,7 @@ This guide shows you how to integrate using any HTTP client.
 
 ```bash
 # Create an agent
-bun run src/cli/index.ts agent create my-agent --trust verified
+meshguard agent create my-agent --trust verified
 
 # Copy the JWT token that's printed
 ```
@@ -81,7 +81,7 @@ Your token contains:
 Tokens expire (default: 24h). Generate a new one:
 
 ```bash
-bun run src/cli/index.ts agent token <agent-id>
+meshguard agent token <agent-id>
 ```
 
 ## API Reference
@@ -608,7 +608,7 @@ curl http://localhost:3100/proxy/api/data \
 ### View Trace
 
 ```bash
-bun run src/cli/index.ts audit trace my-conversation-123
+meshguard audit trace my-conversation-123
 ```
 
 ### Generate Trace IDs
@@ -785,7 +785,7 @@ Token issues:
 echo $TOKEN | cut -d'.' -f2 | base64 -d 2>/dev/null | jq .
 
 # Generate new token
-bun run src/cli/index.ts agent token <agent-id>
+meshguard agent token <agent-id>
 ```
 
 ### 403 on Expected Allow
@@ -794,13 +794,13 @@ Policy mismatch:
 
 ```bash
 # See what's allowed
-bun run src/cli/index.ts policy allowed <agent-id>
+meshguard policy allowed <agent-id>
 
 # Test specific action
-bun run src/cli/index.ts policy test <agent-id> "read:api/data"
+meshguard policy test <agent-id> "read:api/data"
 
 # Check audit log
-bun run src/cli/index.ts audit tail -n 5
+meshguard audit tail -n 5
 ```
 
 ### Requests Timing Out

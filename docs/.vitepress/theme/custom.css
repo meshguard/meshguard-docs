@@ -34,9 +34,19 @@
   color: var(--vp-c-brand-1);
 }
 
-/* Hero section styling */
+/* Brand font - Inter for logo and titles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Hero section styling - MeshGuard in Inter per brand guide */
 .VPHero .name {
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-weight: 600;
+}
+
+/* Nav bar logo text - Inter */
+.VPNavBarTitle .title {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-weight: 600;
 }
 
 /* Feature cards */

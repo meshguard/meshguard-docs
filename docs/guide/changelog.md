@@ -44,10 +44,22 @@ meshguard policy test --agent my-agent --action delete:* --verbose
 
 See [CLI Reference](/guide/cli#test-policy) for full documentation.
 
+#### Homebrew Tap Now Public
+
+The MeshGuard CLI is now available via our public Homebrew tap:
+
+```bash
+brew tap meshguard/tap
+brew install meshguard
+```
+
+The tap is open source at [github.com/meshguard/homebrew-tap](https://github.com/meshguard/homebrew-tap).
+
 ### Improvements
 
 - Admin audit now includes before/after values for agent updates
 - Better error messages for policy evaluation failures
+- Homebrew formula auto-updates on new CLI releases
 
 ---
 

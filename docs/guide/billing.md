@@ -9,30 +9,31 @@ MeshGuard offers tiered plans for individuals, teams, and enterprises. All paid 
 
 ## Plans
 
-| Feature | Free | Starter | Professional | Enterprise |
-|---------|------|---------|-------------|------------|
-| **Price (monthly)** | $0 | $2,000/mo | $10,000/mo | Custom |
-| **Price (annual)** | $0 | $19,200/yr | $96,000/yr | Custom |
-| **Agents** | 5 | 50 | 500 | Unlimited |
-| **Delegations/mo** | 10,000 | 100,000 | 1,000,000 | Unlimited |
-| **Policies** | 3 | 20 | Unlimited | Unlimited |
-| **Audit log retention** | 7 days | 30 days | 1 year | Custom |
-| **Webhook alerts** | ✗ | ✓ | ✓ | ✓ |
-| **Slack alerts** | ✗ | ✗ | ✓ | ✓ |
-| **SSO/SAML** | ✗ | ✗ | ✓ | ✓ |
-| **On-premise deployment** | ✗ | ✗ | ✗ | ✓ |
-| **Dedicated support** | ✗ | ✗ | ✗ | ✓ |
-| **Custom SLA** | ✗ | ✗ | ✗ | ✓ |
-| **HIPAA & ISO 27001** | ✗ | ✗ | ✗ | ✓ |
-| **Support** | Community | Email | Priority | Dedicated engineer |
+| Feature | Free | Team | Enterprise |
+|---------|------|------|------------|
+| **Price (monthly)** | $0 | $2,000/mo | $10,000/mo |
+| **Price (annual)** | $0 | $19,200/yr | $96,000/yr |
+| **Agents** | 5 | 100 | Unlimited |
+| **Policy checks/mo** | 10,000 | 1,000,000 | Unlimited |
+| **Policies** | 5 | Unlimited | Unlimited |
+| **Audit log retention** | 7 days | 90 days | 1 year+ |
+| **Team members** | 3 | 25 | Unlimited |
+| **Custom policies** | ✗ | ✓ | ✓ |
+| **Webhook alerts** | ✗ | ✓ | ✓ |
+| **Delegation chains** | ✗ | ✓ | ✓ |
+| **SSO/SAML** | ✗ | ✗ | ✓ |
+| **Self-hosted** | ✗ | ✗ | ✓ |
+| **Dedicated support** | ✗ | ✗ | ✓ |
+| **SLA** | ✗ | 99.9% | 99.99% |
+| **Support** | Community | Priority email | Dedicated Slack |
 
 Annual billing saves **20%** compared to monthly.
 
 ## Feature Limits
 
-### Delegations
+### Policy Checks
 
-A delegation is any action an agent requests through MeshGuard — tool calls, API invocations, data access, or any governed operation. Each policy evaluation counts as one delegation. Health checks and audit queries do not count.
+Each call to `client.check()`, `client.enforce()`, or the `/proxy/*` gateway endpoint counts as one policy check. Health checks and audit queries do not count.
 
 When you reach your plan's limit, behavior depends on your configuration:
 
@@ -70,7 +71,7 @@ curl -X POST https://dashboard.meshguard.app/billing/checkout \
   -H "Content-Type: application/json" \
   -d '{
     "email": "you@company.com",
-    "plan": "professional",
+    "plan": "team",
     "interval": "month"
   }'
 ```

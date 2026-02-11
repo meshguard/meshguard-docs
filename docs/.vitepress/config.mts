@@ -19,6 +19,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/getting-started' },
       { text: 'Integrations', link: '/integrations/overview' },
       { text: 'API', link: '/api/overview' },
+      { text: 'Issues', link: 'https://github.com/meshguard/issues' },
       { text: 'Dashboard', link: 'https://dashboard.meshguard.app' },
       { text: 'Sign Up', link: 'https://meshguard.app' },
     ],
@@ -107,7 +108,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/meshguard/meshguard-python' },
+      { icon: 'github', link: 'https://github.com/meshguard/issues' },
       { icon: 'x', link: 'https://x.com/MeshGuardApp' },
       { icon: 'linkedin', link: 'https://www.linkedin.com/company/meshguard/' },
     ],

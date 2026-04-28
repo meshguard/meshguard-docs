@@ -1,0 +1,27 @@
+# MeshGuard Docs
+
+> Official documentation for MeshGuard, the governance control plane for AI agents.
+
+This site contains the technical reference for integrating, deploying, and operating MeshGuard. It is the primary source for developers and operators implementing agent identity, policy, audit, and analytics with MeshGuard.
+
+## About
+MeshGuard is the governance layer for enterprise AI agent ecosystems. These docs cover:
+- The Python, JavaScript, and .NET SDKs
+- Framework integrations (LangChain, CrewAI, AutoGPT, OpenClaw, Clawdbot, Claude Code, OpenAI Agents, Semantic Kernel, Bedrock, Vertex AI)
+- The HTTP gateway and admin APIs
+- Self-hosted and enterprise deployment guides
+- Policy authoring, audit log querying, and analytics
+
+## Sections
+- Guide: /guide/getting-started — install, quickstart, core concepts, deployment
+- Integrations: /integrations/overview — SDKs and framework adapters
+- API: /api/overview — gateway, admin, analytics, billing endpoints
+
+## Related sites
+- Marketing & sign-up: https://meshguard.app
+- Conceptual guides and comparisons: https://learn.meshguard.app
+- Dashboard: https://dashboard.meshguard.app
+- Status: https://status.meshguard.app
+
+## Contact
+support@meshguard.app

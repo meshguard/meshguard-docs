@@ -101,6 +101,7 @@ export default defineConfig({
           items: [
             { text: 'Agent Identity', link: '/guide/identity' },
             { text: 'Policies', link: '/guide/policies' },
+            { text: 'Streaming Content Inspection', link: '/guide/streaming-security' },
             { text: 'Audit Logging', link: '/guide/audit' },
             { text: 'Analytics Dashboard', link: '/guide/analytics' },
             { text: 'Alerting', link: '/guide/alerting' },
@@ -111,12 +112,14 @@ export default defineConfig({
           text: 'Deployment',
           items: [
             { text: 'Self-Hosted', link: '/guide/self-hosted' },
+            { text: 'Guardian Sidecar', link: '/guide/guardian-sidecar' },
             { text: 'Enterprise', link: '/guide/enterprise' },
           ]
         },
         {
           text: 'Account',
           items: [
+            { text: 'SSO / OAuth Login', link: '/guide/sso' },
             { text: 'Billing & Subscriptions', link: '/guide/billing' },
           ]
         },

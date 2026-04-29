@@ -101,10 +101,17 @@ export default defineConfig({
           items: [
             { text: 'Agent Identity', link: '/guide/identity' },
             { text: 'Policies', link: '/guide/policies' },
+            { text: 'Trust Scoring & Delegation', link: '/guide/trust-scoring' },
+            { text: 'Anomaly Detection', link: '/guide/anomaly-detection' },
+            { text: 'Role-Based Access Control', link: '/guide/rbac' },
             { text: 'Streaming Content Inspection', link: '/guide/streaming-security' },
+            { text: 'Destructive Action Prevention', link: '/guide/destructive-prevention' },
             { text: 'Audit Logging', link: '/guide/audit' },
+            { text: 'Compliance Reports', link: '/guide/compliance-reports' },
             { text: 'Analytics Dashboard', link: '/guide/analytics' },
             { text: 'Alerting', link: '/guide/alerting' },
+            { text: 'Agent Discovery', link: '/guide/agent-discovery' },
+            { text: 'OpenTelemetry Integration', link: '/guide/otel' },
             { text: 'CLI Reference', link: '/guide/cli' },
           ]
         },
@@ -138,6 +145,8 @@ export default defineConfig({
             { text: 'Python SDK', link: '/integrations/python' },
             { text: 'JavaScript SDK', link: '/integrations/javascript' },
             { text: '.NET SDK', link: '/integrations/dotnet' },
+            { text: 'Go SDK', link: '/integrations/go' },
+            { text: 'Rust SDK', link: '/integrations/rust' },
           ]
         },
         {
@@ -154,6 +163,13 @@ export default defineConfig({
             { text: 'AWS Bedrock', link: '/integrations/bedrock' },
             { text: 'Vertex AI', link: '/integrations/vertex-ai' },
             { text: 'Generic HTTP', link: '/integrations/http' },
+          ]
+        },
+        {
+          text: 'Tooling',
+          items: [
+            { text: 'Terraform Provider', link: '/integrations/terraform' },
+            { text: 'GitHub Action', link: '/integrations/github-action' },
           ]
         }
       ],
